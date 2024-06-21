@@ -1,0 +1,16 @@
+a {
+    text-decoration: none;
+    color: rgb(0, 140, 49) !important;
+    display: block !important;
+}
+
+.text-card {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+  
+.full-description {
+white-space: normal;
+text-overflow: clip;
+}

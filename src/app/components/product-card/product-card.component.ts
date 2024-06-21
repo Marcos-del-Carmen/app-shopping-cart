@@ -5,13 +5,19 @@ import { Product } from '../../models/product';
   selector: 'app-product-card',
   standalone: true,
   imports: [],
-  templateUrl: './product-card.component.html'
+  templateUrl: './product-card.component.html',
+  styleUrl: './product-card.component.css'
 })
 export class ProductCardComponent {
   @Input() product! : Product;
   @Output() productEventEmitter: EventEmitter<Product> = new EventEmitter();
+  showText: boolean = false;
 
   onAddCart(product: Product) {
     this.productEventEmitter.emit(product);
+  }
+
+  onPrestShowText() {
+    this.showText = !this.showText;
   }
 }
