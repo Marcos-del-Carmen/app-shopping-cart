@@ -7,6 +7,7 @@
             <th scope="col">Precio</th>
             <th scope="col">Cantidad</th>
             <th scope="col">Total</th>
+            <th scope="col">Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -16,6 +17,9 @@
                 <td>{{item.product.price}}</td>
                 <td>{{item.quantity}}</td>
                 <td>{{item.product.price * item.quantity}}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm" (click)="onDeleteCart(item.product.id)">eliminar</button>
+                </td>
             </tr>
         }
     </tbody>

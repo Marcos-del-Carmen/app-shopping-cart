@@ -22,7 +22,23 @@ export class CartAppComponent implements OnInit {
   }
 
   onAddCart(product: Product) {
-    
-    this.items = [ ...this.items, {product: { ...product}, quantity: 1}];
+    const hasItem = this.items.find(item => item.product.id === product.id); // el método .find sirve para buscar algo en el arreglo
+    if(hasItem) {
+      this.items = this.items.map(item => { // me devuelve el arreglo que se tiene modificando y agregando más 1 en la cantidad
+        if (item.product.id === product.id){
+          return {
+            ...item,
+            quantity: item.quantity + 1 
+          }
+        }
+        return item
+      });
+    } else {
+      this.items = [ ...this.items, {product: { ...product}, quantity: 1}];
+    } // en caso de que no se cumpla me agrega el producto a la lista
+  }
+
+  onDeleteCart(id: number) : void {
+    this.items = this.items.filter(item => item.product.id !== id);
   }
 }
