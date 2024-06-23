@@ -13,13 +13,14 @@ export class CartComponent implements OnChanges {
   @Output() idProductEventEmitter : EventEmitter<number> = new EventEmitter();
 
   ngOnChanges(changes: SimpleChanges): void {
-    let itemsChanges = changes['items'];
+    // let itemsChanges = changes['items'];
     this.calculateTotal();
     this.saveSession();
   }
 
   onDeleteCart(id: number) {
     this.idProductEventEmitter.emit(id);
+    
   }
 
   calculateTotal(): void {
