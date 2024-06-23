@@ -9,9 +9,9 @@
 }
  
 .animacion {
-    animation-duration: 2s;
-    animation-fill-mode: both;
-    -webkit-animation-duration: 2s;
+    animation-duration: .8s;
+    animation-fill-mode:both;
+    -webkit-animation-duration: .8s;
     -webkit-animation-fill-mode: both;
 }
  
@@ -19,15 +19,29 @@
     animation-name: fadeIn;
     -webkit-animation-name: fadeIn;
 }
+
+.fadeEnd {
+    animation-name: fadeEnd;
+}
  
 @keyframes fadeIn {
-    0% {
-        opacity: 0
+    from {
+        transform: translateY(-100%);
     }
- 
     to {
-        opacity: 1
+        transform: translateY(0%);
     }
+
+}
+
+@keyframes fadeEnd {
+    from {
+        transform: translateY(0%);
+    }
+    to {
+        transform: translateY(-100%);
+    }
+
 }
  
 @-webkit-keyframes fadeIn {
