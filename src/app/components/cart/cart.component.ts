@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter } from '@angular/core';
 import { CartItem } from '../../models/cartItem';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cart',
@@ -7,15 +8,16 @@ import { CartItem } from '../../models/cartItem';
   imports: [],
   templateUrl: './cart.component.html'
 })
-export class CartComponent implements OnChanges {
-  @Input() items : CartItem[] = [];
-  @Input() total: number = 0;
-  @Output() idProductEventEmitter : EventEmitter<number> = new EventEmitter();
+export class CartComponent {
+  items : CartItem[] = [];
+  total: number = 0;
+  idProductEventEmitter : EventEmitter<number> = new EventEmitter();
 
-  ngOnChanges(changes: SimpleChanges): void {
-    // let itemsChanges = changes['items'];
-    this.calculateTotal();
-    this.saveSession();
+  constructor(private router: Router){ 
+    this.items = this.router.getCurrentNavigation()?.extras.state!['items'];
+    this.total = this.router.getCurrentNavigation()?.extras.state!['total'];
+    console.log('Datos desde cart ',this.items);
+
   }
 
   onDeleteCart(id: number) {
@@ -23,11 +25,4 @@ export class CartComponent implements OnChanges {
     
   }
 
-  calculateTotal(): void {
-    this.total = this.items.reduce( (accumulator, item)=>accumulator + item.quantity * item.product.price, 0);
-  }
-
-  saveSession() {
-    sessionStorage.setItem('cart', JSON.stringify(this.items));
-  }
 }

@@ -12,7 +12,11 @@
         </ul>
         <div class="d-flex" role="search">
           <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success btn-sm" (click)="openCart()">Show cart ({{items.length}})</button>
+          <a 
+            role="button" class="btn btn-outline-success btn-sm"
+            [routerLink]="['/cart']" [state]="{items: items, total : total}">
+            Show cart ({{items.length}})
+          </a>
         </div>
       </div>
     </div>

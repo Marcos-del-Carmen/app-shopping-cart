@@ -1,9 +1,7 @@
-<app-navbar [items]="items" (showcartEventEmitter)="openCart()"></app-navbar>
+<app-navbar [items]="items" [total]="total" (showcartEventEmitter)="openCart()"></app-navbar>
 
 <div class="container my-4">
     <h2 class="md-0">Catologo de productos App!</h2>
     <app-catalog [products]="products" (productEventEmitter)="onAddCart($event)"></app-catalog>
-    @if (showCart) {
-        <app-modal-card [cartItem]="items"  (idProductEventEmitter)="onDeleteCart($event)" (showcartEventEmitter)="openCart()"></app-modal-card>
-    }
+    <router-outlet></router-outlet>
 </div>
