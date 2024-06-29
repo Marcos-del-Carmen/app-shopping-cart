@@ -1,7 +1,7 @@
-<app-navbar [items]="items" [total]="total" (showcartEventEmitter)="openCart()"></app-navbar>
+<app-navbar [items]="items" [total]="total" [products]="products" (showcartEventEmitter)="openCart()"></app-navbar>
 
 <div class="container my-4">
-    <h2 class="md-0">Catologo de productos App!</h2>
-    <app-catalog [products]="products" (productEventEmitter)="onAddCart($event)"></app-catalog>
+    <!-- <h2 class="md-0">Catologo de productos App!</h2> -->
+    <!-- <app-catalog [products]="products" (productEventEmitter)="onAddCart($event)"></app-catalog> -->
     <router-outlet></router-outlet>
 </div>

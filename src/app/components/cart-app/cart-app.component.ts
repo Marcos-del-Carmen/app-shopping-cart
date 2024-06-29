@@ -7,6 +7,7 @@ import { CartItem } from '../../models/cartItem';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { SharingDataService } from '../../services/sharing-data.service';
 
 
 @Component({
@@ -21,41 +22,47 @@ export class CartAppComponent implements OnInit {
   total: number = 0;
   showCart: boolean = false;
 
-  constructor(public _serviceProduct: ProductService){ }
+  constructor(private _serviceSharingData: SharingDataService , public _serviceProduct: ProductService){ }
 
   ngOnInit(): void {
     this.products = this._serviceProduct.fillAll();
     this.items = JSON.parse(sessionStorage.getItem('cart')!) || [];
     this.calculateTotal();
+    this.onDeleteCart();
+    this.onAddCart();
   }
 
-  onAddCart(product: Product) {
-    const hasItem = this.items.find(item => item.product.id === product.id); // el método .find sirve para buscar algo en el arreglo
-    if(hasItem) {
-      this.items = this.items.map(item => { // me devuelve el arreglo que se tiene modificando y agregando más 1 en la cantidad
-        if (item.product.id === product.id){
-          return {
-            ...item,
-            quantity: item.quantity + 1 
+  onAddCart() {
+    this._serviceSharingData.getProductEventEmitter.subscribe(product => {
+      const hasItem = this.items.find(item => item.product.id === product.id); // el método .find sirve para buscar algo en el arreglo
+      if(hasItem) {
+        this.items = this.items.map(item => { // me devuelve el arreglo que se tiene modificando y agregando más 1 en la cantidad
+          if (item.product.id === product.id){
+            return {
+              ...item,
+              quantity: item.quantity + 1 
+            }
           }
-        }
-        return item
-      });
-    } else {
-      this.items = [ ...this.items, {product: { ...product}, quantity: 1}];
-    } // en caso de que no se cumpla me agrega el producto a la lista
-    this.calculateTotal();
-    this.saveSession();
+          return item
+        });
+      } else {
+        this.items = [ ...this.items, {product: { ...product}, quantity: 1}];
+      } // en caso de que no se cumpla me agrega el producto a la lista
+      this.calculateTotal();
+      this.saveSession();
+    })
   }
 
-  onDeleteCart(id: number) : void {
-    this.items = this.items.filter(item => item.product.id !== id);
-    if(this.items.length === 0) {
-      sessionStorage.removeItem('cart');
-      // sessionStorage.clear();
-    }
-    this.calculateTotal();
-    this.saveSession();
+  onDeleteCart() : void {
+    this._serviceSharingData.getIdProductEventEmitter.subscribe(id => {
+      this.items = this.items.filter(item => item.product.id !== id);
+      if(this.items.length === 0) {
+        sessionStorage.removeItem('cart');
+        // sessionStorage.clear();
+      }
+      this.calculateTotal();
+      this.saveSession();
+    })
   }
 
   calculateTotal(): void {

@@ -1,18 +1,15 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CartItem } from '../../models/cartItem';
 import { RouterModule } from '@angular/router';
+import { Product } from '../../models/product';
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [RouterModule],
   templateUrl: './navbar.component.html'
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
   @Input() items: CartItem[] = [];
   @Input() total: number = 0;
-
-  ngOnInit() {
-    console.log(this.items);
-  }
-  
+  @Input() products: Product[] = [];
 }
