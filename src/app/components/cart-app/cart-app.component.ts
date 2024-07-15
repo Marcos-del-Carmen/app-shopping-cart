@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CatalogComponent } from '../catalog/catalog.component';
 import { Product } from '../../models/product';
-import { ProductService } from '../../services/product.service';
 import { CartComponent } from '../cart/cart.component';
 import { CartItem } from '../../models/cartItem';
 import { NavbarComponent } from '../navbar/navbar.component';
@@ -9,6 +8,9 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterOutlet } from '@angular/router';
 import { SharingDataService } from '../../services/sharing-data.service';
 import Swal from 'sweetalert2';
+import { Store } from '@ngrx/store';
+import { ItemsState } from '../../store/items.reducer';
+import { add, remove, total } from '../../store/items.actions';
 
 
 @Component({
@@ -26,38 +28,28 @@ export class CartAppComponent implements OnInit {
   constructor(
     private router: Router, 
     private _serviceSharingData: SharingDataService , 
-    public _serviceProduct: ProductService) {
+    private store : Store<{items : ItemsState}>
+  ) {
+    this.store.select('items').subscribe(state=>{
+      this.items = state.items;
+      this.total = state.total;
+      this.saveSession();
+      console.log('Se actualiza el producto')
+    });
   }
 
   ngOnInit(): void {
-    this.products = this._serviceProduct.fillAll();
-    this.items = JSON.parse(sessionStorage.getItem('cart')!) || [];
-    this.calculateTotal();
+    this.store.dispatch(total());
     this.onDeleteCart();
     this.onAddCart();
   }
 
   onAddCart() {
     this._serviceSharingData.getProductEventEmitter.subscribe(product => {
-      const hasItem = this.items.find(item => item.product.id === product.id); // el método .find sirve para buscar algo en el arreglo
-      if(hasItem) {
-        this.items = this.items.map(item => { // me devuelve el arreglo que se tiene modificando y agregando más 1 en la cantidad
-          if (item.product.id === product.id){
-            return {
-              ...item,
-              quantity: item.quantity + 1,
-            }
-          }
-          return item
-        });
-      } else {
-        this.items = [ ...this.items, {product: { ...product}, quantity: 1}];
-      } // en caso de que no se cumpla me agrega el producto a la lista
-      this.calculateTotal();
-      this.saveSession();
-      // this.router.navigate(['/cart'], {
-      //   state : {items: this.items, total : this.total}
-      // })
+
+      this.store.dispatch(add({product}));
+      this.store.dispatch(total());
+
       Swal.fire({
         position: "center",
         icon: "success",
@@ -79,13 +71,14 @@ export class CartAppComponent implements OnInit {
       confirmButtonText: "Si, ¡eliminar!"
     }).then((result) => {
       if (result.isConfirmed) {
-          this.items = this.items.filter(item => item.product.id !== id);
+          // this.items = this.items.filter(item => item.product.id !== id);
+          this.store.dispatch(remove({id}));
+          this.store.dispatch(total());
+
           if(this.items.length === 0) {
             sessionStorage.removeItem('cart');
             // sessionStorage.clear();
           }
-          this.calculateTotal();
-          this.saveSession();
     
           this.router.navigateByUrl('/', {skipLocationChange: true}).then(()=>{
             this.router.navigate(['/cart'], {
@@ -100,10 +93,6 @@ export class CartAppComponent implements OnInit {
         }
       });
     })
-  }
-
-  calculateTotal(): void {
-    this.total = this.items.reduce( (accumulator, item)=>accumulator + item.quantity * item.product.price, 0);
   }
 
   saveSession() {
